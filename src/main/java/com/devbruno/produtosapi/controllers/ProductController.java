@@ -24,10 +24,15 @@ public class ProductController {
         return productRepository.save(product);
     }
 
-    @GetMapping()
-    public List<Product> findAll(){
-        return productRepository.findAll();
+    @GetMapping
+    public List<Product> findByName(@RequestParam("name") String name){
+        return productRepository.findByName(name);
     }
+
+//    @GetMapping
+//    public List<Product> findAll(){
+//        return productRepository.findAll();
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> findById(@PathVariable("id") UUID id) {
@@ -41,5 +46,11 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") UUID id) {
          productRepository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public void update(@PathVariable("id") UUID id, @RequestBody Product product){
+        product.setId(id);
+        productRepository.save(product);
     }
 }
