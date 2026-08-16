@@ -1,18 +1,45 @@
 package com.devbruno.produtosapi.controllers;
 
 import com.devbruno.produtosapi.models.Product;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.devbruno.produtosapi.repositories.ProductRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
+    private ProductRepository productRepository;
+
+    public ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @PostMapping
     public Product save(@RequestBody Product product){
-        //System.out.println("Produto recebido: " + product);
-        return product;
+        return productRepository.save(product);
+    }
+
+    @GetMapping()
+    public List<Product> findAll(){
+        return productRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> findById(@PathVariable("id") UUID id) {
+//        Optional<Product> product = productRepository.findById(id);
+//        return product.isPresent() ? product.get() : null;
+        return productRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable("id") UUID id) {
+         productRepository.deleteById(id);
     }
 }
